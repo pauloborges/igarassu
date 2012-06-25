@@ -13,7 +13,7 @@ public class SerialConn extends Hardware {
     
     @Override
     public String type() {
-        return "Serial";
+        return type;
     }
     
     @Override
@@ -25,7 +25,7 @@ public class SerialConn extends Hardware {
     public void update() {
         // FIXME
         int idPad = Integer.parseInt(_msg);
-        this.instrument.routeTrigger(idPad);
+        this.instrument.triggerPad(idPad);
     }
     
     public static void updateState(String msg) {

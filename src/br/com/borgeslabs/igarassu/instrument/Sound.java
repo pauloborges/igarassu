@@ -9,4 +9,8 @@ public interface Sound {
 
     // Release any releaseble resources.
     public void close();
+    
+    public float[] buffer();
+    
+    public float energy();
 }

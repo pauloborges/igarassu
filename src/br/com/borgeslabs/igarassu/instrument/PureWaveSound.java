@@ -8,20 +8,16 @@ import ddf.minim.signals.SineWave;
 import ddf.minim.AudioOutput;
 
 public class PureWaveSound implements Sound {
-    // Default sample rate
+    /** Default sample rate */
     public static final int SAMPLE_RATE = 44100;
 
-    // TODO
-    public static final int BUFFER_SIZE = 256;
+    public static final int BUFFER_SIZE = 512;
 
-    // Playback duration in milliseconds
+    /** Playback duration in milliseconds */
     public static final int PLAYBACK_DURATION = 100;
 
-    // TODO
     SineWave wave;
     AudioOutput output;
-
-    // TODO
     Timer timer;
 
     private class StopTask extends TimerTask {
@@ -32,22 +28,20 @@ public class PureWaveSound implements Sound {
     }
 
     public PureWaveSound(Minim minim, float frequency, float intensity) {
-        // Create the sine wave
+        // Creates the sine wave
         this.wave = new SineWave(frequency, intensity, SAMPLE_RATE);
 
-        // Create an output line, add the wave signal and silence it.
+        // Creates an output line, add the wave signal and silence it.
         this.output = minim.getLineOut(Minim.MONO, BUFFER_SIZE);
         this.output.addSignal(this.wave);
-        // this.output.noSound();
-        this.output.mute();
+        this.output.noSound();
+        //this.output.mute();
     }
 
     @Override
     public void play() {
-        // this.output.sound();
-        this.output.unmute();
-
-        System.out.println("PureWaveSound.play()");
+        this.output.sound();
+        //this.output.unmute();
 
         if (this.timer != null)
             this.timer.cancel();
@@ -57,13 +51,22 @@ public class PureWaveSound implements Sound {
 
     @Override
     public void stop() {
-        this.output.mute();
-
-        System.out.println("PureWaveSound.stop()");
+        this.output.noSound();
+        //this.output.mute();
     }
 
     @Override
     public void close() {
         this.output.close();
+    }
+
+    @Override
+    public float[] buffer() {
+        return this.output.mix.toArray();
+    }
+
+    @Override
+    public float energy() {
+        return this.output.mix.level();
     }
 }

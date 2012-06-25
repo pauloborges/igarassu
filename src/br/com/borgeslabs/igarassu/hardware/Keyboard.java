@@ -3,8 +3,6 @@ package br.com.borgeslabs.igarassu.hardware;
 import java.util.HashMap;
 import java.util.Map;
 
-import br.com.borgeslabs.igarassu.instrument.Instrument;
-
 public class Keyboard extends Hardware {
     public static final String type = "Keyboard";
     
@@ -37,7 +35,7 @@ public class Keyboard extends Hardware {
     public void update() {
         if (_keyPressed && this.mapping.containsKey(_key)) {
             int idPad = this.mapping.get(_key);
-            this.instrument.routeTrigger(idPad);
+            this.instrument.triggerPad(idPad);
         }
     }
     

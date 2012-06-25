@@ -3,9 +3,12 @@ package br.com.borgeslabs.igarassu.instrument;
 import java.util.List;
 import java.util.Vector;
 import ddf.minim.Minim;
+import br.com.borgeslabs.igarassu.Painter;
 import br.com.borgeslabs.igarassu.hardware.Hardware;
 import br.com.borgeslabs.igarassu.hardware.Keyboard;
 import br.com.borgeslabs.igarassu.hardware.SerialConn;
+import br.com.borgeslabs.igarassu.ui.Colors;
+import br.com.borgeslabs.igarassu.ui.Style;
 
 /**
  * The <code>Instrument</code> class represents a virtual instrument with
@@ -92,11 +95,56 @@ public class Instrument {
                 hardware.update();
     }
     
-    public void routeTrigger(int idPad) {
+    public void triggerPad(int idPad) {
         this.pads.get(idPad).trigger();
     }
     
-    public void draw() {
+    public void draw(Painter painter) {
+        // Desenha o grid onde serão armazenados os Pads.
+        // [TODO translate]
         
+        int width = painter.width();
+        int height = painter.height();
+        int numPads = this.pads.size();
+        
+        int widthDiv;
+        if (numPads <= 2)
+            widthDiv = 1;
+        else if (numPads <= 6)
+            widthDiv = 2;
+        else
+            widthDiv = 3;
+        
+        int heightDiv;
+        if (numPads == 1)
+            heightDiv = 1;
+        else if (numPads <= 4)
+            heightDiv = 2;
+        else
+            heightDiv = 3;
+        
+        int padWidth = width / widthDiv;
+        int padHeight = height / heightDiv;
+        
+        // Bordas dos Pad's são grossas e brancas
+        painter.pushUiStyle(new Style(Colors.WHITE, Colors.THICKER_STROKE_WEIGHT, Colors.NO_FILL));
+        
+        for (int x = 0; x < widthDiv; x++) {
+            for (int y = 0; y < heightDiv; y++) {
+                int ix = x * padWidth;
+                int iy = y * padHeight;
+                int fx = ix + padWidth;
+                int fy = iy + padHeight;
+                
+                painter.rect(ix, iy, fx, fy);
+                
+                int index = x + y * widthDiv;
+                
+                if (index < numPads)
+                    this.pads.get(index).draw(painter, ix, iy, fx, fy);
+            }
+        }
+        
+        painter.popUiStyle();
     }
 }
