@@ -16,7 +16,7 @@ public class Igarassu extends PApplet {
     static private Serial serial;
 
     public static void main(String args[]) {
-        PApplet.main(new String[] { /*"--present",*/
+        PApplet.main(new String[] { "--present",
                 "br.com.borgeslabs.igarassu.Igarassu" });
     }
 
@@ -29,7 +29,7 @@ public class Igarassu extends PApplet {
         
         // Window setup
         this.size(this.screenWidth, this.screenHeight);
-        this.size(800,600);
+        //this.size(800,600);
         this.frameRate(30);
         
         // Text setup
