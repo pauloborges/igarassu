@@ -1,5 +1,6 @@
 package br.com.borgeslabs.igarassu.ui;
 
+@Deprecated
 public class Style {
     public int stroke;
     public int weight;
