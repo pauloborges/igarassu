@@ -5,4 +5,5 @@ public class Color {
     public static final int GRAY =      0xFFCCCCCC;
     public static final int BLACK =     0xFF000000;
     public static final int RED =       0xFFFF0000;
+    public static final int YELLOW =    0xFFFFFF00;
 }

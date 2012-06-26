@@ -55,19 +55,21 @@ public class Instrument {
     }
 
     public static Instrument loadInstrument(Minim minim) {
+        int padId = 0;
+        
         Instrument instrument = new Instrument("Bateria");
 
-        instrument.addPad(new Pad("Ataque", new FakeSound(), instrument));
-        instrument.addPad(new Pad("Tom 1", new SampleSound(minim, "data/tom.wav"), instrument));
-        instrument.addPad(new Pad("Tom 2", new FakeSound(), instrument));
-        instrument.addPad(new Pad("Chimbal", new SampleSound(minim, "data/hihat.wav"), instrument));
-        instrument.addPad(new Pad("Caixa", new SampleSound(minim, "data/snare.wav"), instrument));
-        instrument.addPad(new Pad("Surdo", new FakeSound(), instrument));
-        instrument.addPad(new Pad("Condução", new FakeSound(), instrument));
-        instrument.addPad(new Pad("Bumbo", new FakeSound(), instrument));
+        instrument.addPad(new Pad(padId++, "Tom 1", new SampleSound(minim, "data/tom.wav"), instrument));
+        instrument.addPad(new Pad(padId++, "Tom 2", new FakeSound(), instrument));
+        instrument.addPad(new Pad(padId++, "Ataque", new FakeSound(), instrument));
+        instrument.addPad(new Pad(padId++, "Chimbal", new SampleSound(minim, "data/hihat.wav"), instrument));
+        instrument.addPad(new Pad(padId++, "Caixa", new SampleSound(minim, "data/snare.wav"), instrument));
+        instrument.addPad(new Pad(padId++, "Surdo", new FakeSound(), instrument));
+        instrument.addPad(new Pad(padId++, "Condução", new FakeSound(), instrument));
+        instrument.addPad(new Pad(padId++, "Bumbo", new FakeSound(), instrument));
 
         Keyboard keyboard = new Keyboard();
-        keyboard.addMapping('a', 1);
+        keyboard.addMapping('a', 0);
         keyboard.addMapping('s', 3);
         keyboard.addMapping('d', 4);
         
@@ -104,14 +106,18 @@ public class Instrument {
             this.hardwares.remove(hardware);
     }
 
-    public void update(String hardwareType) {
+    public void update(String hardwareType, int timestamp) {
         for (Hardware hardware : this.hardwares)
             if (hardware.type().equals(hardwareType))
-                hardware.update();
+                hardware.update(timestamp);
     }
 
-    public void triggerPad(int idPad) {
-        this.pads.get(idPad).trigger();
+    public void triggerPad(int idPad, int intensity, int timestamp) {
+        this.pads.get(idPad).trigger(intensity, timestamp);
+    }
+    
+    public void digitalTriggerPad(int idPad) {
+        this.pads.get(idPad).digitalTrigger();
     }
     
     public void controlAction(int action) {

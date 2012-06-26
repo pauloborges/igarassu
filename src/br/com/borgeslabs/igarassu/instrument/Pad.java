@@ -2,16 +2,22 @@ package br.com.borgeslabs.igarassu.instrument;
 
 import processing.core.PApplet;
 import br.com.borgeslabs.igarassu.ui.Color;
+import br.com.borgeslabs.igarassu.ui.Graph;
 import br.com.borgeslabs.igarassu.ui.StrokeWeight;
 
 public class Pad {
-    /** Pad identifier */
+    /** Pad identifiers */
     private String name;
+    private int id;
+    // FIXME id é muito perigoso, pq é o índice na lista de pads no instrumento
+    // e isso pode mudar facilmente sem o Pad perceber
     
     // TODO
     private Sound sound;
     
     private Instrument instrument;
+    
+    private Graph graph;
 
     // TODO
     public static final int DEFAULT_INTENSITY_THRESHOLD = 200;
@@ -23,6 +29,9 @@ public class Pad {
     public static final int MAX_SILENCE_WINDOW = 100;
     private int silenceWindow = DEFAULT_SILENCE_WINDOW;
     
+    private int lastTriggerTimestamp;
+    private int lastIntensity;
+    
     private int ENERGY_BAR_WIDTH = 30;
     
     private boolean selected;
@@ -32,18 +41,38 @@ public class Pad {
     public static final int INCREASE_WINDOW = 'W';
     public static final int DECREASE_WINDOW = 'E';
 
-    public Pad(String name, Sound sound, Instrument instrument) {
+    public Pad(int id, String name, Sound sound, Instrument instrument) {
+        this.id = id;
         this.name = name;
+        
         this.sound = sound;
         this.instrument = instrument;
+        
+        this.lastTriggerTimestamp = 0;
+        this.lastIntensity = 0;
+        
         this.selected = false;
+        
+        this.graph = new Graph();
     }
 
     public void close() {
         this.sound.close();
     }
 
-    public void trigger() {
+    public void trigger(int intensity, int timestamp) {
+        if (intensity >= this.intensityThreshold 
+                && this.lastIntensity < this.intensityThreshold
+                && timestamp - this.lastTriggerTimestamp >= this.silenceWindow) {
+            this.sound.play();
+            this.lastTriggerTimestamp = timestamp;
+        }
+        
+        this.graph.addValue(intensity);
+        this.lastIntensity = intensity;
+    }
+    
+    public void digitalTrigger() {
         this.sound.play();
     }
     
@@ -60,17 +89,47 @@ public class Pad {
     }
     
     public void controlAction(int action) {
-        if (action == INCREASE_THRESHOLD)
-            this.intensityThreshold = Math.min(MAX_INTENSITY_THRESHOLD, this.intensityThreshold + 1);
+        if (action == INCREASE_THRESHOLD) {
+            int tmp = this.intensityThreshold;
+            this.intensityThreshold = Math.min(MAX_INTENSITY_THRESHOLD, tmp + 1);
+            
+            if (tmp < MAX_INTENSITY_THRESHOLD)
+                this.commitAction(action, this.intensityThreshold);
+        }
+            
         
-        else if (action == DECREASE_THRESHOLD)
-            this.intensityThreshold = Math.max(0, this.intensityThreshold - 1);
+        else if (action == DECREASE_THRESHOLD) {
+            int tmp = this.intensityThreshold;
+            this.intensityThreshold = Math.max(0, tmp - 1);
+            
+            if (tmp > 0)
+                this.commitAction(action, this.intensityThreshold);
+        }
         
-        else if (action == INCREASE_WINDOW)
-            this.silenceWindow = Math.min(MAX_SILENCE_WINDOW, this.silenceWindow + 1);
+        else if (action == INCREASE_WINDOW) {
+            int tmp = this.silenceWindow;
+            this.silenceWindow = Math.min(MAX_SILENCE_WINDOW, tmp + 1);
+            
+            if (tmp < MAX_SILENCE_WINDOW)
+                this.commitAction(action, this.silenceWindow);
+        }
         
-        else if (action == DECREASE_WINDOW)
-            this.silenceWindow = Math.max(0, this.silenceWindow - 1);;
+        else if (action == DECREASE_WINDOW) {
+            int tmp = this.silenceWindow;
+            this.silenceWindow = Math.max(0, tmp - 1);
+            
+            if (tmp > 0)
+                this.commitAction(action, this.silenceWindow);
+        }
+    }
+    
+    /**
+     * Commit the action in another component (A {@link Hardware}, for example).
+     * @param action
+     * @param param
+     */
+    private void commitAction(int action, int param) {
+        //System.out.println("PadID: " + this.id + " Action: " + action + " Value: " + param);
     }
 
     /**
@@ -124,6 +183,8 @@ public class Pad {
         painter.popStyle();
         
         float gx = ex + this.ENERGY_BAR_WIDTH;
+        float gwidth = ex - x;
+        this.graph.draw(painter, gx, y, gwidth, height, this.intensityThreshold);
         
         // Write the threshold and window length in the second graph
         painter.textSize(15);

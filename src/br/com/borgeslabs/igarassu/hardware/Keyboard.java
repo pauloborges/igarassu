@@ -43,10 +43,10 @@ public class Keyboard extends Hardware {
     }
 
     @Override
-    public void update() {
+    public void update(int timestamp) {
         if (_keyPressed && this.mapping.containsKey(_key)) {
             int idPad = this.mapping.get(_key);
-            this.instrument.triggerPad(idPad);
+            this.instrument.digitalTriggerPad(idPad);
         }
 
         else if (_keyPressed && (this.controlMapping.containsKey(_keyCode))

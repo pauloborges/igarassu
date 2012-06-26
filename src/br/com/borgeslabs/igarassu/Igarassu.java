@@ -24,10 +24,13 @@ public class Igarassu extends PApplet {
         // Start sound
         this.minim = new Minim(this);
         
+        // Placeholder instrument
+        this.instrument = Instrument.loadInstrument(minim);
+        
         // Window setup
-        //this.size(this.screenWidth, this.screenHeight);
+        this.size(this.screenWidth, this.screenHeight);
         this.size(800,600);
-        this.frameRate(60);
+        this.frameRate(30);
         
         // Text setup
         this.font = this.loadFont("Calibri-25.vlw");
@@ -37,15 +40,14 @@ public class Igarassu extends PApplet {
         if (Serial.list().length > 0) {
             serial = new Serial(this, Serial.list()[0], SerialConn.BAUD);
             serial.bufferUntil(SerialConn.ENCLOSING_MSG_CHAR);
+            
+            SerialConn.initSerial(serial);
         } else {
             println();
             println("=== IGARASSU ===");
             println("=== WARNING! Serial not found.");
             println();
         }
-        
-        // Placeholder instrument
-        this.instrument = Instrument.loadInstrument(minim);
     }
 
     public void stop() {
@@ -63,24 +65,20 @@ public class Igarassu extends PApplet {
 
     public void serialEvent(Serial serial) {
         SerialConn.updateState(serial.readStringUntil(SerialConn.ENCLOSING_MSG_CHAR));
-        this.instrument.update(SerialConn.type);
+        this.instrument.update(SerialConn.type, this.millis());
     }
 
     public void keyPressed() {
         Keyboard.updateState(this.key, this.keyCode, this.keyPressed);
-        this.instrument.update(Keyboard.type);
+        this.instrument.update(Keyboard.type, this.millis());
     }
     
     public void keyReleased() {
         Keyboard.updateState(this.key, this.keyCode, this.keyPressed);
-        this.instrument.update(Keyboard.type);
+        this.instrument.update(Keyboard.type, this.millis());
     }
     
     public void mouseClicked() {
         this.instrument.activateArea(this.width, this.height, this.mouseX, this.mouseY);
-    }
-    
-    static public Serial serial() {
-        return serial;
     }
 }

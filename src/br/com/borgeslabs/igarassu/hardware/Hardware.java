@@ -37,7 +37,7 @@ public abstract class Hardware {
      * Updates the <code>Hardware</code>, calling {@link #instrument}'s 
      * callbacks if necessary.
      */
-    public abstract void update();
+    public abstract void update(int timestamp);
     
     /**
      * Closes the <code>Hardware</code>, releasing any releasable resources.

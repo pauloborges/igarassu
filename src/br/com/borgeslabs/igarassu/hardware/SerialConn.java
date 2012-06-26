@@ -1,6 +1,6 @@
 package br.com.borgeslabs.igarassu.hardware;
 
-import br.com.borgeslabs.igarassu.Igarassu;
+import br.com.borgeslabs.igarassu.instrument.Pad;
 import processing.serial.Serial;
 
 public class SerialConn extends Hardware {
@@ -9,10 +9,13 @@ public class SerialConn extends Hardware {
     public static final int BAUD = 57600;
     
     private static String _msg;
-    private Serial serial;
+    private static Serial _serial;
+    
+    public static void initSerial(Serial serial) {
+        _serial = serial;
+    }
     
     public SerialConn() {
-        this.serial = Igarassu.serial();
     }
     
     @Override
@@ -26,10 +29,26 @@ public class SerialConn extends Hardware {
     }
     
     @Override
-    public void update() {
-        // FIXME
-        int idPad = Integer.parseInt(_msg);
-        this.instrument.triggerPad(idPad);
+    public void update(int timestamp) {
+        // Parse the msg. The igarassu messaging protocol:
+        // <PAD_NUM>,<INTENSITY>\n
+        
+        int comma = _msg.indexOf(',');
+        int newline = _msg.indexOf(ENCLOSING_MSG_CHAR);
+        
+        if (comma == -1 || newline == -1)
+            return;
+        
+        try {
+            int idPad = Integer.parseInt(_msg.substring(0, comma));
+            int intensity = Integer.parseInt(_msg.substring(comma+1, newline-1));
+            
+            //System.out.println("Pad: " + idPad + " Intensidade: " + intensity);
+    
+            this.instrument.triggerPad(idPad, intensity, timestamp);
+        } catch (Exception e) {
+            System.out.println("Exceção: " + e.getMessage());
+        }
     }
     
     public static void updateState(String msg) {
