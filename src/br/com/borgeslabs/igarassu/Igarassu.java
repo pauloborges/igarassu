@@ -10,13 +10,13 @@ import processing.serial.Serial;
 public class Igarassu extends PApplet {
     private static final long serialVersionUID = 1L;
     
-    PFont font;
-    Minim minim;
-    Serial serial;
-    Instrument instrument;
+    private PFont font;
+    private Minim minim;
+    private Instrument instrument;
+    static private Serial serial;
 
     public static void main(String args[]) {
-        PApplet.main(new String[] { "--present",
+        PApplet.main(new String[] { /*"--present",*/
                 "br.com.borgeslabs.igarassu.Igarassu" });
     }
 
@@ -25,8 +25,8 @@ public class Igarassu extends PApplet {
         this.minim = new Minim(this);
         
         // Window setup
-        this.size(this.screenWidth, this.screenHeight);
-        //this.size(800,600);
+        //this.size(this.screenWidth, this.screenHeight);
+        this.size(800,600);
         this.frameRate(60);
         
         // Text setup
@@ -35,8 +35,8 @@ public class Igarassu extends PApplet {
         
         // Serial setup
         if (Serial.list().length > 0) {
-            this.serial = new Serial(this, Serial.list()[0], SerialConn.BAUD);
-            this.serial.bufferUntil(SerialConn.ENCLOSING_MSG_CHAR);
+            serial = new Serial(this, Serial.list()[0], SerialConn.BAUD);
+            serial.bufferUntil(SerialConn.ENCLOSING_MSG_CHAR);
         } else {
             println();
             println("=== IGARASSU ===");
@@ -50,7 +50,7 @@ public class Igarassu extends PApplet {
 
     public void stop() {
         this.minim.stop();
-        this.serial.stop();
+        serial.stop();
         
         this.instrument.close();
     }
@@ -77,6 +77,10 @@ public class Igarassu extends PApplet {
     }
     
     public void mouseClicked() {
-        this.instrument.selectArea(this.width, this.height, this.mouseX, this.mouseY);
+        this.instrument.activateArea(this.width, this.height, this.mouseX, this.mouseY);
+    }
+    
+    static public Serial serial() {
+        return serial;
     }
 }

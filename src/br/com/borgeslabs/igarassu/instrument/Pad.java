@@ -7,25 +7,35 @@ import br.com.borgeslabs.igarassu.ui.StrokeWeight;
 public class Pad {
     /** Pad identifier */
     private String name;
+    
+    // TODO
+    private Sound sound;
+    
+    private Instrument instrument;
 
     // TODO
     public static final int DEFAULT_INTENSITY_THRESHOLD = 200;
+    public static final int MAX_INTENSITY_THRESHOLD = 1023;
     private int intensityThreshold = DEFAULT_INTENSITY_THRESHOLD;
 
     // TODO
     public static final int DEFAULT_SILENCE_WINDOW = 5;
-    private int silenceWindow;
-
-    // TODO
-    private Sound sound;
+    public static final int MAX_SILENCE_WINDOW = 100;
+    private int silenceWindow = DEFAULT_SILENCE_WINDOW;
     
     private int ENERGY_BAR_WIDTH = 30;
     
     private boolean selected;
+    
+    public static final int INCREASE_THRESHOLD = 'T';
+    public static final int DECREASE_THRESHOLD = 'Y';
+    public static final int INCREASE_WINDOW = 'W';
+    public static final int DECREASE_WINDOW = 'E';
 
-    public Pad(String name, Sound sound) {
+    public Pad(String name, Sound sound, Instrument instrument) {
         this.name = name;
         this.sound = sound;
+        this.instrument = instrument;
         this.selected = false;
     }
 
@@ -47,6 +57,20 @@ public class Pad {
     
     public String name() {
         return this.name;
+    }
+    
+    public void controlAction(int action) {
+        if (action == INCREASE_THRESHOLD)
+            this.intensityThreshold = Math.min(MAX_INTENSITY_THRESHOLD, this.intensityThreshold + 1);
+        
+        else if (action == DECREASE_THRESHOLD)
+            this.intensityThreshold = Math.max(0, this.intensityThreshold - 1);
+        
+        else if (action == INCREASE_WINDOW)
+            this.silenceWindow = Math.min(MAX_SILENCE_WINDOW, this.silenceWindow + 1);
+        
+        else if (action == DECREASE_WINDOW)
+            this.silenceWindow = Math.max(0, this.silenceWindow - 1);;
     }
 
     /**

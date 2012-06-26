@@ -1,14 +1,18 @@
 package br.com.borgeslabs.igarassu.hardware;
 
+import br.com.borgeslabs.igarassu.Igarassu;
+import processing.serial.Serial;
+
 public class SerialConn extends Hardware {
     public static final String type = "Serial";
     public static final int ENCLOSING_MSG_CHAR = '\n';
     public static final int BAUD = 57600;
     
     private static String _msg;
+    private Serial serial;
     
     public SerialConn() {
-        // Empty
+        this.serial = Igarassu.serial();
     }
     
     @Override

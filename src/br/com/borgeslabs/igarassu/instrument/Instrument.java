@@ -55,24 +55,26 @@ public class Instrument {
     }
 
     public static Instrument loadInstrument(Minim minim) {
-        Instrument instrument = new Instrument("Drum");
+        Instrument instrument = new Instrument("Bateria");
 
-        instrument.addPad(new Pad("Ataque", new FakeSound()));
-        instrument.addPad(new Pad("Tom 1", new SampleSound(minim,
-                "data/tom.wav")));
-        instrument.addPad(new Pad("Tom 2", new FakeSound()));
-        instrument.addPad(new Pad("Chimbal", new SampleSound(minim,
-                "data/hihat.wav")));
-        instrument.addPad(new Pad("Caixa", new SampleSound(minim,
-                "data/snare.wav")));
-        instrument.addPad(new Pad("Surdo", new FakeSound()));
-        instrument.addPad(new Pad("Condução", new FakeSound()));
-        instrument.addPad(new Pad("Bumbo", new FakeSound()));
+        instrument.addPad(new Pad("Ataque", new FakeSound(), instrument));
+        instrument.addPad(new Pad("Tom 1", new SampleSound(minim, "data/tom.wav"), instrument));
+        instrument.addPad(new Pad("Tom 2", new FakeSound(), instrument));
+        instrument.addPad(new Pad("Chimbal", new SampleSound(minim, "data/hihat.wav"), instrument));
+        instrument.addPad(new Pad("Caixa", new SampleSound(minim, "data/snare.wav"), instrument));
+        instrument.addPad(new Pad("Surdo", new FakeSound(), instrument));
+        instrument.addPad(new Pad("Condução", new FakeSound(), instrument));
+        instrument.addPad(new Pad("Bumbo", new FakeSound(), instrument));
 
         Keyboard keyboard = new Keyboard();
         keyboard.addMapping('a', 1);
         keyboard.addMapping('s', 3);
         keyboard.addMapping('d', 4);
+        
+        keyboard.addControlMapping(Keyboard.LEFT_ARROW, Pad.DECREASE_WINDOW);
+        keyboard.addControlMapping(Keyboard.RIGHT_ARROW, Pad.INCREASE_WINDOW);
+        keyboard.addControlMapping(Keyboard.DOWN_ARROW, Pad.DECREASE_THRESHOLD);
+        keyboard.addControlMapping(Keyboard.UP_ARROW, Pad.INCREASE_THRESHOLD);
         instrument.addHardware(keyboard);
 
         SerialConn serial = new SerialConn();
@@ -110,6 +112,15 @@ public class Instrument {
 
     public void triggerPad(int idPad) {
         this.pads.get(idPad).trigger();
+    }
+    
+    public void controlAction(int action) {
+        if (this.selectedPad != null)
+            this.selectedPad.controlAction(action);
+        
+        else
+            for (Pad pad : this.pads)
+                pad.controlAction(action);
     }
     
     /**
@@ -162,7 +173,6 @@ public class Instrument {
         boolean thereIsSelectedPad = false;
         
         painter.pushStyle();
-        //painter.stroke(Color.WHITE);
         painter.strokeWeight(StrokeWeight.THICK);
         painter.noFill();
 
@@ -197,7 +207,7 @@ public class Instrument {
         painter.popStyle();
     }
     
-    public void selectArea(int width, int height, int mouseX, int mouseY) {
+    public void activateArea(int width, int height, int mouseX, int mouseY) {
         int[] div = this.calculateGrid();
         int padWidth = width / div[0];
         int padHeight = height / div[1];
