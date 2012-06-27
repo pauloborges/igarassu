@@ -56,45 +56,53 @@ public class Instrument {
 
     public static Instrument loadInstrument(Minim minim) {
         int padId = 0;
-        
+
         Instrument instrument = new Instrument("Bateria");
         Keyboard keyboard = new Keyboard();
-        
-        instrument.addPad(new Pad(padId, "Tom", new SampleSound(minim, "data/set/tom2.wav"), instrument));
+
+        instrument.addPad(new Pad(padId, "Tom", new SampleSound(minim,
+                "data/set/tom2.wav"), instrument));
         keyboard.addMapping('l', padId);
         keyboard.addMapping('k', padId++);
-        
-        instrument.addPad(new Pad(padId, "Ataque", new SampleSound(minim, "data/set/crash1.wav"), instrument));
+
+        instrument.addPad(new Pad(padId, "Ataque", new SampleSound(minim,
+                "data/set/crash1.wav"), instrument));
         keyboard.addMapping('o', padId++);
-        
-        instrument.addPad(new Pad(padId, "Chimbal aberto", new SampleSound(minim, "data/set/openhihat.wav"), instrument));
+
+        instrument.addPad(new Pad(padId, "Chimbal aberto", new SampleSound(
+                minim, "data/set/openhihat.wav"), instrument));
         keyboard.addMapping('u', padId++);
-        
-        instrument.addPad(new Pad(padId, "Chimbal fechado", new SampleSound(minim, "data/set/closedhihat.wav"), instrument));
+
+        instrument.addPad(new Pad(padId, "Chimbal fechado", new SampleSound(
+                minim, "data/set/closedhihat.wav"), instrument));
         keyboard.addMapping('t', padId);
         keyboard.addMapping('y', padId++);
-        
-        instrument.addPad(new Pad(padId, "Caixa", new SampleSound(minim, "data/set/snare.wav"), instrument));
+
+        instrument.addPad(new Pad(padId, "Caixa", new SampleSound(minim,
+                "data/set/snare.wav"), instrument));
         keyboard.addMapping('d', padId);
         keyboard.addMapping('f', padId++);
-        
-        instrument.addPad(new Pad(padId, "Surdo", new SampleSound(minim, "data/set/tom3.wav"), instrument));
+
+        instrument.addPad(new Pad(padId, "Surdo", new SampleSound(minim,
+                "data/set/tom3.wav"), instrument));
         keyboard.addMapping('g', padId);
         keyboard.addMapping('h', padId++);
-        
-        instrument.addPad(new Pad(padId, "Condução", new SampleSound(minim, "data/set/ridebell.wav"), instrument));
+
+        instrument.addPad(new Pad(padId, "Condução", new SampleSound(minim,
+                "data/set/ridebell.wav"), instrument));
         keyboard.addMapping('p', padId);
         keyboard.addMapping('\'', padId++);
-        
-        instrument.addPad(new Pad(padId, "Bumbo", new SampleSound(minim, "data/set/kick.wav"), instrument));
+
+        instrument.addPad(new Pad(padId, "Bumbo", new SampleSound(minim,
+                "data/set/kick.wav"), instrument));
         keyboard.addMapping('a', padId);
         keyboard.addMapping('s', padId++);
-        
+
         keyboard.addControlMapping(Keyboard.LEFT_ARROW, Pad.DECREASE_WINDOW);
         keyboard.addControlMapping(Keyboard.RIGHT_ARROW, Pad.INCREASE_WINDOW);
         keyboard.addControlMapping(Keyboard.DOWN_ARROW, Pad.DECREASE_THRESHOLD);
         keyboard.addControlMapping(Keyboard.UP_ARROW, Pad.INCREASE_THRESHOLD);
-        
+
         instrument.addHardware(keyboard);
 
         SerialConn serial = new SerialConn();
@@ -133,20 +141,20 @@ public class Instrument {
     public void triggerPad(int idPad, int intensity, int timestamp) {
         this.pads.get(idPad).trigger(intensity, timestamp);
     }
-    
+
     public void digitalTriggerPad(int idPad) {
         this.pads.get(idPad).digitalTrigger();
     }
-    
+
     public void controlAction(int action) {
         if (this.selectedPad != null)
             this.selectedPad.controlAction(action);
-        
+
         else
             for (Pad pad : this.pads)
                 pad.controlAction(action);
     }
-    
+
     /**
      * Calculate how the screen will be splitted to arrange the {@link Pad}s.
      * 
@@ -173,7 +181,7 @@ public class Instrument {
             division[1] = 3;
 
         // FIXME Esse caso deve entrar no caso geral ai em cima nessa
-        // configura��o
+        // configuração
         if (numPads == 8) {
             division[0] = 2;
             division[1] = 4;
@@ -195,7 +203,7 @@ public class Instrument {
         int sx = 0;
         int sy = 0;
         boolean thereIsSelectedPad = false;
-        
+
         painter.pushStyle();
         painter.strokeWeight(StrokeWeight.THICK);
         painter.noFill();
@@ -211,7 +219,7 @@ public class Instrument {
                 if (index < numPads) {
                     Pad pad = this.pads.get(index);
                     pad.draw(painter, ix, iy, padWidth, padHeight);
-                    
+
                     if (pad.isSelected()) {
                         thereIsSelectedPad = true;
                         sx = ix;
@@ -222,7 +230,7 @@ public class Instrument {
                 painter.rect(ix, iy, padWidth, padHeight);
             }
         }
-        
+
         if (thereIsSelectedPad) {
             painter.stroke(Color.RED);
             painter.rect(sx, sy, padWidth, padHeight);
@@ -230,26 +238,26 @@ public class Instrument {
 
         painter.popStyle();
     }
-    
+
     public void activateArea(int width, int height, int mouseX, int mouseY) {
         int[] div = this.calculateGrid();
         int padWidth = width / div[0];
         int padHeight = height / div[1];
         int index = mouseX / padWidth + (mouseY / padHeight) * div[0];
-        
+
         if (this.pads.size() > index) {
             Pad pad = this.pads.get(index);
-            
+
             if (this.selectedPad == null) {
                 pad.select(true);
                 this.selectedPad = pad;
             }
-            
+
             else if (this.selectedPad == pad) {
                 pad.select(false);
                 this.selectedPad = null;
             }
-            
+
             else {
                 pad.select(true);
                 this.selectedPad.select(false);
