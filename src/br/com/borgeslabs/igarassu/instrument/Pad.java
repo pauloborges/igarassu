@@ -26,7 +26,7 @@ public class Pad {
 
     // TODO
     public static final int DEFAULT_SILENCE_WINDOW = 5;
-    public static final int MAX_SILENCE_WINDOW = 100;
+    public static final int MAX_SILENCE_WINDOW = 1000;
     private int silenceWindow = DEFAULT_SILENCE_WINDOW;
 
     private int lastTriggerTimestamp;
@@ -163,8 +163,8 @@ public class Pad {
         for (int i = 0; i < buffer.length - 1; i++) {
             float x1 = PApplet.map(i, 0, buffer.length - 1, x, ex);
             float x2 = PApplet.map(i + 1, 0, buffer.length - 1, x, ex);
-            float y1 = PApplet.map(buffer[i], -1.0f, 1.0f, y, y + height);
-            float y2 = PApplet.map(buffer[i + 1], -1.0f, 1.0f, y, y + height);
+            float y1 = PApplet.map(buffer[i], -2.0f, 2.0f, y, y + height);
+            float y2 = PApplet.map(buffer[i + 1], -2.0f, 2.0f, y, y + height);
 
             painter.line(x1, y1, x2, y2);
         }

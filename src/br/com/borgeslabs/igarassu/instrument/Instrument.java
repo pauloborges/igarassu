@@ -60,44 +60,44 @@ public class Instrument {
         Instrument instrument = new Instrument("Bateria");
         Keyboard keyboard = new Keyboard();
 
-        instrument.addPad(new Pad(padId, "Tom", new SampleSound(minim,
-                "data/set/tom2.wav"), instrument));
-        keyboard.addMapping('l', padId);
-        keyboard.addMapping('k', padId++);
-
-        instrument.addPad(new Pad(padId, "Ataque", new SampleSound(minim,
-                "data/set/crash1.wav"), instrument));
-        keyboard.addMapping('o', padId++);
-
-        instrument.addPad(new Pad(padId, "Chimbal aberto", new SampleSound(
-                minim, "data/set/openhihat.wav"), instrument));
-        keyboard.addMapping('u', padId++);
-
         instrument.addPad(new Pad(padId, "Chimbal fechado", new SampleSound(
                 minim, "data/set/closedhihat.wav"), instrument));
         keyboard.addMapping('t', padId);
         keyboard.addMapping('y', padId++);
 
-        instrument.addPad(new Pad(padId, "Caixa", new SampleSound(minim,
-                "data/set/snare.wav"), instrument));
-        keyboard.addMapping('d', padId);
-        keyboard.addMapping('f', padId++);
-
-        instrument.addPad(new Pad(padId, "Surdo", new SampleSound(minim,
-                "data/set/tom3.wav"), instrument));
-        keyboard.addMapping('g', padId);
-        keyboard.addMapping('h', padId++);
-
-        instrument.addPad(new Pad(padId, "Condução", new SampleSound(minim,
-                "data/set/ridebell.wav"), instrument));
-        keyboard.addMapping('p', padId);
-        keyboard.addMapping('\'', padId++);
-
+        instrument.addPad(new Pad(padId, "Ataque", new SampleSound(minim,
+                "data/set/crash1.wav"), instrument));
+        keyboard.addMapping('o', padId++);
+        
         instrument.addPad(new Pad(padId, "Bumbo", new SampleSound(minim,
                 "data/set/kick.wav"), instrument));
         keyboard.addMapping('a', padId);
         keyboard.addMapping('s', padId++);
 
+        instrument.addPad(new Pad(padId, "Tom", new SampleSound(minim,
+                "data/set/tom2.wav"), instrument));
+        keyboard.addMapping('l', padId);
+        keyboard.addMapping('k', padId++);
+        
+        instrument.addPad(new Pad(padId, "Surdo", new SampleSound(minim,
+                "data/set/tom3.wav"), instrument));
+        keyboard.addMapping('g', padId);
+        keyboard.addMapping('h', padId++);
+        
+        instrument.addPad(new Pad(padId, "Condução", new SampleSound(minim,
+                "data/set/ridebell.wav"), instrument));
+        keyboard.addMapping('p', padId);
+        keyboard.addMapping('\'', padId++);
+        
+        instrument.addPad(new Pad(padId, "Caixa", new SampleSound(minim,
+                "data/set/snare.wav"), instrument));
+        keyboard.addMapping('d', padId);
+        keyboard.addMapping('f', padId++);
+        
+        instrument.addPad(new Pad(padId, "Chimbal aberto", new SampleSound(
+                minim, "data/set/openhihat.wav"), instrument));
+        keyboard.addMapping('u', padId++);
+        
         keyboard.addControlMapping(Keyboard.LEFT_ARROW, Pad.DECREASE_WINDOW);
         keyboard.addControlMapping(Keyboard.RIGHT_ARROW, Pad.INCREASE_WINDOW);
         keyboard.addControlMapping(Keyboard.DOWN_ARROW, Pad.DECREASE_THRESHOLD);
